@@ -17,6 +17,7 @@ class NewRecipeItemViewViewModel: ObservableObject {
     @Published var category: RecipeCategory = .main
     @Published var difficulty: Difficulty = .easy
     @Published var imageURL: String? = nil
+    @Published var isPublic: Bool = false
     
     // Дієтичні фільтри
     @Published var isGlutenFree: Bool = false
@@ -27,48 +28,72 @@ class NewRecipeItemViewViewModel: ObservableObject {
     @Published var isKidsFree: Bool = false
     
     @Published var showAlert: Bool = false
-    @Published var selectedImage: UIImage? = nil
     
     init() {}
     
-    func save() {
-            guard canSave else {
-                showAlert = true
-                return
-            }
-
-            guard let uId = Auth.auth().currentUser?.uid else {
-                return
-            }
-
-            uploadPhoto { [weak self] url in
-                let newId = UUID().uuidString
-                let newRecipe = RecipeListItem(
-                    id: newId,
-                    title: self?.title ?? "",
-                    ingredients: self?.ingredients ?? [],
-                    instructions: self?.instructions ?? "",
-                    categories: self?.category ?? .main,
-                    difficulty: self?.difficulty ?? .easy,
-                    imageURL: url,
-                    createdDate: Date().timeIntervalSince1970,
-                    isFavorite: false,
-                    isGlutenFree: self?.isGlutenFree ?? false,
-                    isVegan: self?.isVegan ?? false,
-                    isVegetarian: self?.isVegetarian ?? false,
-                    isDairyFree: self?.isDairyFree ?? false,
-                    isNutFree: self?.isNutFree ?? false,
-                    isKidsFree: self?.isKidsFree ?? false
-                )
-
-                let db = Firestore.firestore()
-                db.collection("users")
-                    .document(uId)
-                    .collection("recipes")
-                    .document(newId)
-                    .setData(newRecipe.asDictionary())
-            }
+    func save(selectedImage: UIImage?) {
+        guard canSave else {
+            showAlert = true
+            return
         }
+        
+        guard let uId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let newId = UUID().uuidString
+        
+        func saveRecipe(imageURL: String?) {
+            let newRecipe = RecipeListItem(
+                id: newId,
+                ownerId: uId,
+                title: title,
+                ingredients: ingredients,
+                instructions: instructions,
+                categories: category,
+                difficulty: difficulty,
+                imageURL: imageURL,
+                createdDate: Date().timeIntervalSince1970,
+                isFavorite: false,
+                isPublic: isPublic,
+                isGlutenFree: isGlutenFree,
+                isVegan: isVegan,
+                isVegetarian: isVegetarian,
+                isDairyFree: isDairyFree,
+                isNutFree: isNutFree,
+                isKidsFree: isKidsFree
+            )
+            
+            let db = Firestore.firestore()
+            db.collection("users")
+                .document(uId)
+                .collection("recipes")
+                .document(newId)
+                .setData(newRecipe.asDictionary())
+        }
+
+        if let image = selectedImage {
+            let storageRef = Storage.storage().reference()
+                .child("users/\(uId)/recipes/\(newId).jpg")
+            
+            if let imageData = image.jpegData(compressionQuality: 0.8) {
+                storageRef.putData(imageData) { _, error in
+                    if error == nil {
+                        storageRef.downloadURL { url, _ in
+                            saveRecipe(imageURL: url?.absoluteString)
+                        }
+                    } else {
+                        saveRecipe(imageURL: nil)
+                    }
+                }
+            } else {
+                saveRecipe(imageURL: nil)
+            }
+        } else {
+            saveRecipe(imageURL: nil)
+        }
+    }
+
 
         var canSave: Bool {
             guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
@@ -76,50 +101,4 @@ class NewRecipeItemViewViewModel: ObservableObject {
             guard !ingredients.isEmpty else { return false }
             return true
         }
-
-    func uploadPhoto(completion: @escaping (String?) -> Void) {
-        //Make sure that the selected image property isn't nil
-        guard let selectedImage = selectedImage else {
-            completion(nil)
-            return
-        }
-        
-        //Create storage reference
-        let storageRef = Storage.storage().reference()
-        
-        //Turn our image into data
-        let imageData = selectedImage.jpegData(compressionQuality: 0.6)
-        
-        guard let imageData = imageData else {
-            completion(nil)
-            return
-        }
-        
-        //Specify the file path and name
-        let path = "image/\(UUID().uuidString).jpg"
-        let fileRef = storageRef.child(path)
-        
-        //Upload that data
-        let uploadTask = fileRef.putData(imageData, metadata: nil) {
-            metadata, error in
-            
-            //Check for errors
-            if error == nil && metadata != nil {
-                
-                //Save a reference to the file in Firestore
-                fileRef.downloadURL { url, error in
-                    if let downloadURL = url {
-                        completion(downloadURL.absoluteString)
-                        return
-                    } else {
-                        completion(nil)
-                        return
-                    }
-                }
-            } else {
-                completion(nil)
-                return
-            }
-        }
-    }
 }

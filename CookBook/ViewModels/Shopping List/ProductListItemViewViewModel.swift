@@ -21,7 +21,6 @@ class ProductListItemViewViewModel: ObservableObject {
             return
         }
 
-        // Работаем с Firestore
         let db = Firestore.firestore()
         
         db.collection("users")

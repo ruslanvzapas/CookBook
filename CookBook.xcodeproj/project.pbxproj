@@ -35,9 +35,22 @@
 		9117F96D2D31D52300D10F29 /* CookBookUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CookBookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		91EA0F2B2DE677CB0058F642 /* Exceptions for "CookBook" folder in "CookBook" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 9117F9522D31D52100D10F29 /* CookBook */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9117F9552D31D52100D10F29 /* CookBook */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				91EA0F2B2DE677CB0058F642 /* Exceptions for "CookBook" folder in "CookBook" target */,
+			);
 			path = CookBook;
 			sourceTree = "<group>";
 		};
@@ -422,6 +435,7 @@
 				DEVELOPMENT_TEAM = 6D6A4FPTRC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CookBook/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BUO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -457,6 +471,7 @@
 				DEVELOPMENT_TEAM = 6D6A4FPTRC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CookBook/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BUO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

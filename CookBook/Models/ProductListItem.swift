@@ -11,8 +11,6 @@ struct ProductListItem: Codable, Identifiable {
     let id: String
     var title: String
     var quantity: String
-    // let dueDate: TimeInterval
-    // let createdDate: TimeInterval
     var isDone: Bool
     
     mutating func setDone(_ state: Bool) {

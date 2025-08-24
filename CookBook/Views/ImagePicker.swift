@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 
-/*struct ImagePicker: UIViewControllerRepresentable {
+struct ImagePicker: UIViewControllerRepresentable {
     
     @Binding var selectedImage: UIImage?
     @Binding var isPickerShowing: Bool
@@ -63,4 +63,4 @@ class Coordinator: NSObject, UIImagePickerControllerDelegate,
     
 }
 
-*/
+

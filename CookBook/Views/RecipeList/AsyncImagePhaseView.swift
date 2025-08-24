@@ -29,5 +29,5 @@ struct AsyncImagePhaseView: View {
 }
 
 #Preview {
-    AsyncImagePhaseView(url: "https://example.com/image.jpg", width: 100, height: 100)
+    AsyncImagePhaseView(url: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fimages%2Fsearch%2Fnature%2F&psig=AOvVaw0KOvIQ0p5wxZBiV6Okh_eD&ust=1744956958854000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLD5jq-13owDFQAAAAAdAAAAABAE", width: 100, height: 100)
 }

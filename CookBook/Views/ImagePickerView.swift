@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseStorage
 import FirebaseFirestore
 
-/*struct ImagePickerView1: View {
+struct ImagePickerView: View {
     
     @State var isPickerShowing = false
     @State var selectedImage: UIImage?
@@ -45,7 +45,7 @@ import FirebaseFirestore
         }
     }
     
-    func uploadPhoto() {
+    /*func uploadPhoto() {
         
         //Make sure that the selected image property isn't nil
         guard selectedImage != nil else {
@@ -63,8 +63,8 @@ import FirebaseFirestore
         }
         
         //Specify the file path and name
-        let path = "image/\(UUID().uuidString).jpg"
-        let fileRef = storageRef.child("image/\(UUID().uuidString).jpg")
+        let path = "images/\(UUID().uuidString).jpg"
+        let fileRef = storageRef.child(path)
         
         //Upload that data
         let uploadTask = fileRef.putData(imageData!, metadata: nil) {
@@ -75,17 +75,41 @@ import FirebaseFirestore
                 
                 //Save a reference to the file in Firestore
                 let db = Firestore.firestore()
-                db.collection("image")
+                db.collection("images")
                     .document()
                     .setData(["url":path])
                 
             }
         }
         
+    }*/
+    
+    func uploadPhoto() {
+        guard let selectedImage = selectedImage,
+              let imageData = selectedImage.jpegData(compressionQuality: 0.6) else {
+            return
+        }
+
+        let path = "images/\(UUID().uuidString).jpg"
+        let fileRef = Storage.storage().reference().child(path)
+
+        fileRef.putData(imageData, metadata: nil) { metadata, error in
+            if error == nil {
+                fileRef.downloadURL { url, error in
+                    if let url = url {
+                        let db = Firestore.firestore()
+                        db.collection("images").document().setData(["url": url.absoluteString])
+                    }
+                }
+            } else {
+                print("Upload error: \(error!.localizedDescription)")
+            }
+        }
     }
+
 }
 
 #Preview {
     ImagePickerView()
 }
-*/
+

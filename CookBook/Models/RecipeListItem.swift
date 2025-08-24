@@ -9,6 +9,7 @@ import Foundation
 
 struct RecipeListItem: Codable, Identifiable {
     let id: String
+    var ownerId: String? 
     var title: String
     var ingredients: [ProductListItem]
     var instructions: String
@@ -17,6 +18,11 @@ struct RecipeListItem: Codable, Identifiable {
     var imageURL: String?
     let createdDate: TimeInterval
     var isFavorite: Bool
+    var isPublic: Bool
+    var publicURL: URL? {
+        guard isPublic else { return nil }
+        return URL(string: "cookbook://recipe?id=\(id)")
+    }
     //Dietary filters
     var isGlutenFree: Bool = false
     var isVegan: Bool = false

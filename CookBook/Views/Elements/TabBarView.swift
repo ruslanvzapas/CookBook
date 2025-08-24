@@ -9,22 +9,24 @@ import SwiftUI
 
 struct TabBarView: View {
     @Binding var activeTab: TabItem
+    @Binding var selectedRecipeID: String?
+
     let userId: String
 
     var body: some View {
         ZStack(alignment: .bottom) {
             if #available(iOS 18, *) {
                 TabView(selection: $activeTab) {
-                    ForEach(TabItem.allCases, id: \.self) { tab in
-                        tab.view(userId: userId)
-                            .tag(tab)
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                    }
-                }
+                            ForEach(TabItem.allCases, id: \.self) { tab in
+                                tab.view(userId: userId, selectedRecipeID: $selectedRecipeID)
+                                    .tag(tab)
+                                    .toolbarVisibility(.hidden, for: .tabBar)
+                            }
+                        }
             } else {
                 TabView(selection: $activeTab) {
                     ForEach(TabItem.allCases, id: \.self) { tab in
-                        tab.view(userId: userId)
+                        tab.view(userId: userId, selectedRecipeID: $selectedRecipeID)
                             .tag(tab)
                             .toolbar(.hidden, for: .tabBar)
                     }
@@ -108,23 +110,29 @@ enum TabItem: String, CaseIterable {
     }
 
     @ViewBuilder
-    func view(userId: String) -> some View {
+    func view(userId: String, selectedRecipeID: Binding<String?>) -> some View {
         switch self {
         case .main:
-            RecipeListView(userId: userId)
+            OverviewView(userId: userId)
         case .search:
-            FavoritesView()
+            SearchView(userId: userId, selectedRecipeID: selectedRecipeID)
         case .allRecipes:
-            ProductListView(userId: userId)
-        case .favorites:
             FavoritesView()
+        case .favorites:
+            ProductListView(userId: userId)
         case .profile:
             ProfileView()
         }
     }
+
 }
 
 #Preview {
     @Previewable @State var activeTab: TabItem = .main
-    return TabBarView(activeTab: $activeTab, userId: "B1xpwSkHdocXfhVqixwHyNZdQdh2")
+    @Previewable @State var selectedRecipeID: String? = nil
+    TabBarView(
+        activeTab: $activeTab,
+        selectedRecipeID: $selectedRecipeID,
+        userId: "B1xpwSkHdocXfhVqixwHyNZdQdh2"
+    )
 }
